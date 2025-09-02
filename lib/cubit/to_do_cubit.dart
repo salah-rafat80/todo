@@ -7,6 +7,7 @@ part 'to_do_state.dart';
 class ToDoCubit extends Cubit<ToDoState> {
   ToDoCubit() : super(ToDoInitial());
   List<TodoModel> toDoList = [];
+  List<TodoModel> completedList = [];
   final Random _random = Random();
 
   String _generateRandomId() {
@@ -27,12 +28,37 @@ class ToDoCubit extends Cubit<ToDoState> {
     );
 
     toDoList.add(todo);
-    emit(ToDoSuccess(ToDoList: toDoList));
+    emit(ToDoSuccess(ToDoList: toDoList, completedList: completedList));
     print(state.toString());
   }
 
   void removeToDo(TodoModel todo) {
     toDoList.removeWhere((element) => element.id == todo.id);
-    emit(ToDoSuccess(ToDoList: toDoList));
+    emit(ToDoSuccess(ToDoList: toDoList, completedList: completedList));
+  }
+
+  void completeToDo(TodoModel todo) {
+    toDoList.removeWhere((element) => element.id == todo.id);
+    final completedTodo = todo.copyWith(
+      isCompleted: true,
+      completedAt: DateTime.now(),
+    );
+    completedList.add(completedTodo);
+    emit(ToDoSuccess(ToDoList: toDoList, completedList: completedList));
+  }
+
+  void removeCompletedToDo(TodoModel todo) {
+    completedList.removeWhere((element) => element.id == todo.id);
+    emit(ToDoSuccess(ToDoList: toDoList, completedList: completedList));
+  }
+
+  void moveBackToToDo(TodoModel completedTodo) {
+    completedList.removeWhere((element) => element.id == completedTodo.id);
+    final todo = completedTodo.copyWith(
+      isCompleted: false,
+      completedAt: null,
+    );
+    toDoList.add(todo);
+    emit(ToDoSuccess(ToDoList: toDoList, completedList: completedList));
   }
 }

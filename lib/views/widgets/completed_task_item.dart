@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/cubit/to_do_cubit.dart';
 import 'package:todo/models/todo_madel.dart';
+import 'package:intl/intl.dart';
 
-class TodoItem extends StatelessWidget {
+class CompletedTaskItem extends StatelessWidget {
   final TodoModel todo;
   final int index;
 
-  const TodoItem({
+  const CompletedTaskItem({
     Key? key,
     required this.todo,
     required this.index,
@@ -22,14 +23,14 @@ class TodoItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           title: Text(
-            'Delete Task',
+            'Delete Completed Task',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
           ),
           content: Text(
-            'Are you sure you want to delete "${todo.name}"?',
+            'Are you sure you want to permanently delete "${todo.name}"?',
             style: TextStyle(color: Colors.grey.shade600),
           ),
           actions: [
@@ -44,7 +45,7 @@ class TodoItem extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<ToDoCubit>().removeToDo(todo);
+                context.read<ToDoCubit>().removeCompletedToDo(todo);
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
@@ -62,7 +63,7 @@ class TodoItem extends StatelessWidget {
     );
   }
 
-  void _showCompleteDialog(BuildContext context) {
+  void _showRestoreDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -71,14 +72,14 @@ class TodoItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           title: Text(
-            'Complete Task',
+            'Restore Task',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
           ),
           content: Text(
-            'Mark "${todo.name}" as completed?',
+            'Move "${todo.name}" back to active tasks?',
             style: TextStyle(color: Colors.grey.shade600),
           ),
           actions: [
@@ -93,17 +94,17 @@ class TodoItem extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<ToDoCubit>().completeToDo(todo);
+                context.read<ToDoCubit>().moveBackToToDo(todo);
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text('Complete'),
+              child: Text('Restore'),
             ),
           ],
         );
@@ -113,6 +114,10 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final completedDate = todo.completedAt != null
+        ? DateFormat('MMM dd, yyyy').format(todo.completedAt!)
+        : 'Unknown';
+
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -133,17 +138,14 @@ class TodoItem extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.indigo.shade100,
+            color: Colors.green.shade100,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
-            child: Text(
-              '${index + 1}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo.shade700,
-                fontSize: 16,
-              ),
+            child: Icon(
+              Icons.check_circle,
+              color: Colors.green.shade700,
+              size: 20,
             ),
           ),
         ),
@@ -152,7 +154,16 @@ class TodoItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade800,
+            color: Colors.grey.shade700,
+            decoration: TextDecoration.lineThrough,
+            decorationColor: Colors.grey.shade500,
+          ),
+        ),
+        subtitle: Text(
+          'Completed on $completedDate',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade500,
           ),
         ),
         trailing: Row(
@@ -162,16 +173,16 @@ class TodoItem extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.green.shade50,
+                color: Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: IconButton(
                 icon: Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.green.shade600,
+                  Icons.restore,
+                  color: Colors.blue.shade600,
                   size: 20,
                 ),
-                onPressed: () => _showCompleteDialog(context),
+                onPressed: () => _showRestoreDialog(context),
               ),
             ),
             SizedBox(width: 8),
