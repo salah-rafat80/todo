@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:todo/cubit/to_do_cubit.dart";
-import "package:todo/views/screens/todo_screen.dart";
+import "package:todo/views/screens/login_screen.dart";
 
 void main() {
   return runApp(MyApp());
@@ -15,7 +15,12 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => ToDoCubit(),
       child: MaterialApp(
-        home: TodoScreen(),
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        ),
+        debugShowCheckedModeBanner: false,
+        home: LoginScreen(),
       ),
     );
   }

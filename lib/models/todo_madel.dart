@@ -1,7 +1,7 @@
 class TodoModel {
-  final String id;
+  final int id;
   final String name;
-  final bool isCompleted;
+  late final bool isCompleted;
   final DateTime? completedAt;
 
   TodoModel({
@@ -12,7 +12,7 @@ class TodoModel {
   });
 
   TodoModel copyWith({
-    String? id,
+    int? id,
     String? name,
     bool? isCompleted,
     DateTime? completedAt,
