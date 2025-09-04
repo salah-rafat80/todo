@@ -56,7 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   text: 'Login',
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      context.read<ToDoCubit>().username = emailController.text;
+                      context.read<ToDoCubit>().setUsername(
+                            emailController.text,
+                          );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
